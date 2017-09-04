@@ -1,0 +1,23 @@
+global:
+    language: "en_US"
+    nlu_engine: nuance
+brain:
+hotword:
+    sound_file: "/hotword_answer.wav"
+    sensitivity: 0.45
+    model_file: "/Coco.pmdl"
+nlu:
+    app_id: NUANCE_APP_ID
+    app_key: NUANCE_APP_KEY
+    username: NUANCE_USERNAME
+    password: NUANCE_PASSWORD
+speech:
+    app_id: NUANCE_APP_ID
+    app_key: NUANCE_APP_KEY
+    codec: "wav"
+    voices:
+        en_US: "Tom"
+        fr_FR: "Thomas"
+being:
+    name: Coco
+time:

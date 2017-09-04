@@ -1,0 +1,20 @@
+version: '2.0'
+services:
+    etcd:
+        image: "quay.io/coreos/etcd"
+        volumes:
+        - ${PWD}/etcd-data/:/etcd-data
+        command:
+        - /usr/local/bin/etcd
+        - --data-dir=/etcd-data 
+        - --listen-client-urls=http://0.0.0.0:2379
+        - --advertise-client-urls=http://127.0.0.1:2379
+        ports:
+        - "2379:2379"
+    mosquitto:
+        image: eclipse-mosquitto:latest
+        volumes:
+        - ${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        ports:
+        - "1883:1883"
+        - "9001:9001"

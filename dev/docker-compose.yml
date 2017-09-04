@@ -1,0 +1,53 @@
+version: '2.0'
+services:
+    etcd:
+        image: "quay.io/coreos/etcd"
+        volumes:
+        - ${PWD}/etcd-data/:/etcd-data
+        command:
+        - /usr/local/bin/etcd
+        - --data-dir=/etcd-data 
+        - --listen-client-urls=http://0.0.0.0:2379
+        - --advertise-client-urls=http://127.0.0.1:2379
+        ports:
+        - "2379:2379"
+    mosquitto:
+        image: eclipse-mosquitto:latest
+        volumes:
+        - ${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        ports:
+        - "1883:1883"
+        - "9001:9001"
+    brain:
+        build:
+            context: ../../brain/
+            dockerfile: Dockerfile
+        links:
+        - etcd
+        - mosquitto
+        volumes:
+        - ${PWD}/tep/config.yaml:/config.yaml
+        command: -c /config.yaml
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883
+    hotword_kittai:
+        build:
+            context: ../../hotword_kittai
+            dockerfile: Dockerfile_pulseaudio
+        volumes:
+        - ${PWD}/tep/Coco.pmdl:/Coco.pmdl
+        - ${PWD}/tep/hotword_answer.wav:/hotword_answer.wav
+        - "/run/user/1000/pulse:/run/pulse:ro"
+        command:
+        - tep
+        links:
+        - etcd
+        - mosquitto
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883

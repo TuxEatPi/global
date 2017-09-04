@@ -1,0 +1,5 @@
+etcd-data/
+*.swp
+env/
+config.yaml
+config.yml
