@@ -6,6 +6,7 @@ services:
         - ${PWD}/etcd-data/:/etcd-data
         command:
         - /usr/local/bin/etcd
+        - --debug
         - --data-dir=/etcd-data 
         - --listen-client-urls=http://0.0.0.0:2379
         - --advertise-client-urls=http://127.0.0.1:2379
@@ -47,7 +48,33 @@ services:
         - TEP_ETCD_PORT=2379
         - TEP_MQTT_HOST=mosquitto
         - TEP_MQTT_PORT=1883
-
+    speech_nuance:
+        image: tuxeatpi/speech-nuance
+        volumes:
+        - "/run/user/1000/pulse:/run/pulse:ro"
+        command:
+        - tep
+        links:
+        - etcd
+        - mosquitto
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883
+    time:
+        image: tuxeatpi/time
+        links:
+        - etcd
+        - mosquitto
+        volumes:
+        - /etc/timezone:/etc/timezone:ro
+        - /etc/localtime:/etc/localtime:ro
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883
 
 #    nlu:
 #        build:

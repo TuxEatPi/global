@@ -6,6 +6,7 @@ services:
         - ${PWD}/etcd-data/:/etcd-data
         command:
         - /usr/local/bin/etcd
+        - --debug
         - --data-dir=/etcd-data 
         - --listen-client-urls=http://0.0.0.0:2379
         - --advertise-client-urls=http://127.0.0.1:2379
