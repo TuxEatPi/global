@@ -28,7 +28,7 @@ services:
         - mosquitto
         volumes:
         - ${PWD}/tep/config.yaml:/config.yaml
-        command: -c /config.yaml
+        command: brain -c /config.yaml
         environment:
         - TEP_ETCD_HOST=etcd
         - TEP_ETCD_PORT=2379
@@ -37,13 +37,11 @@ services:
     hotword_kittai:
         build:
             context: ../../hotword_kittai
-            dockerfile: Dockerfile_pulseaudio
+            dockerfile: Dockerfile
         volumes:
         - ${PWD}/tep/Coco.pmdl:/Coco.pmdl
         - ${PWD}/tep/hotword_answer.wav:/hotword_answer.wav
         - "/run/user/1000/pulse:/run/pulse:ro"
-        command:
-        - tep
         links:
         - etcd
         - mosquitto

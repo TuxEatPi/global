@@ -26,7 +26,7 @@ services:
         - mosquitto
         volumes:
         - ${PWD}/tep/config.yaml:/config.yaml
-        command: -c /config.yaml
+        command: brain -c /config.yaml
         environment:
         - TEP_ETCD_HOST=etcd
         - TEP_ETCD_PORT=2379
@@ -38,8 +38,6 @@ services:
         - ${PWD}/tep/Coco.pmdl:/Coco.pmdl
         - ${PWD}/tep/hotword_answer.wav:/hotword_answer.wav
         - "/run/user/1000/pulse:/run/pulse:ro"
-        command:
-        - tep
         links:
         - etcd
         - mosquitto
@@ -52,8 +50,18 @@ services:
         image: tuxeatpi/speech-nuance
         volumes:
         - "/run/user/1000/pulse:/run/pulse:ro"
-        command:
-        - tep
+        links:
+        - etcd
+        - mosquitto
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883
+    nlu_nuance:
+        image: tuxeatpi/nlu-nuance
+        volumes:
+        - "/run/user/1000/pulse:/run/pulse:ro"
         links:
         - etcd
         - mosquitto
@@ -75,20 +83,13 @@ services:
         - TEP_ETCD_PORT=2379
         - TEP_MQTT_HOST=mosquitto
         - TEP_MQTT_PORT=1883
-
-#    nlu:
-#        build:
-#            context: ../nlu/
-#            dockerfile: Dockerfile
-#    hotword:
-#        build:
-#            context: ../hotword/
-#            dockerfile: Dockerfile
-#    time:
-#        build:
-#            context: ../time/
-#            dockerfile: Dockerfile
-#    being:
-#        build:
-#            context: ../being/
-#            dockerfile: Dockerfile
+    being:
+        image: tuxeatpi/being
+        links:
+        - etcd
+        - mosquitto
+        environment:
+        - TEP_ETCD_HOST=etcd
+        - TEP_ETCD_PORT=2379
+        - TEP_MQTT_HOST=mosquitto
+        - TEP_MQTT_PORT=1883
