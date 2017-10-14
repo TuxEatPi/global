@@ -6,16 +6,26 @@ services:
         - ${PWD}/etcd-data/:/etcd-data
         command:
         - /usr/local/bin/etcd
-        - --debug
         - --data-dir=/etcd-data 
         - --listen-client-urls=http://0.0.0.0:2379
         - --advertise-client-urls=http://127.0.0.1:2379
+        - --debug
         ports:
         - "2379:2379"
-    mosquitto:
-        image: eclipse-mosquitto:latest
+#    mosquitto:
+#        image: eclipse-mosquitto:latest
+#        volumes:
+#        - ${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+#        ports:
+#        - "1883:1883"
+#        - "9001:9001"
+    crossbar:
+        image: crossbario/crossbar:cpy3
         volumes:
-        - ${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+        - ${PWD}/crossbar/crossbar.json:/node/.crossbar/config.json
+        command:
+        - --loglevel
+        - debug
         ports:
-        - "1883:1883"
-        - "9001:9001"
+        - "8080:8080"
+        - "8000:8000"
